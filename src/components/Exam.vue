@@ -1,53 +1,53 @@
 <template>
-  <div class="container">
-    <h1 class="mt-5">Online Exam</h1>
-    <div class="row justify-content-center">
-      <div
-        v-for="(question, index) in shuffledQuestions"
-        :key="index"
-        class="col-md-6"
-      >
-        <div class="card mt-4">
-          <div class="card-body">
-            <p class="card-text">{{ question.text }}</p>
-            <select v-model="selectedAnswers[index]" class="form-select">
-              <option
-                v-for="(answer, ansIndex) in question.answers"
-                :key="ansIndex"
-              >
-                {{ answer.text }}
-              </option>
-            </select>
-          </div>
-        </div>
-      </div>
-    </div>
-    <button @click="submitExam" class="btn btn-primary mt-4 mb-4 w-100">
-      {{ sendButtonText }}
-    </button>
-    <div v-if="showResults" class="mt-4">
-      <h2>Results:</h2>
-      <div class="row">
+    <div class="container">
+      <h1 class="mt-5 text-center">Online Exam</h1>
+      <div class="row justify-content-center">
         <div
-          v-for="(result, index) in examResults"
+          v-for="(question, index) in shuffledQuestions"
           :key="index"
-          class="col-md-6"
+          class="col-md-6 col-sm-12"
         >
-          <div class="result">
-            <p>
-              Question {{ result.questionIndex + 1 }}:
-              {{ result.isCorrect ? "Correct" : "Incorrect" }}
-            </p>
-            <p v-if="!result.isCorrect">
-              Your Answer: {{ result.selectedAnswer }}
-            </p>
-            <p>Correct Answer: {{ result.correctAnswer }}</p>
+          <div class="card mt-4">
+            <div class="card-body">
+              <p class="card-text">{{ question.text }}</p>
+              <select v-model="selectedAnswers[index]" class="form-select">
+                <option
+                  v-for="(answer, ansIndex) in question.answers"
+                  :key="ansIndex"
+                >
+                  {{ answer.text }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button @click="submitExam" class="btn btn-primary mt-4 mb-4 w-100">
+        {{ sendButtonText }}
+      </button>
+      <div v-if="showResults" class="mt-4">
+        <h2>Results:</h2>
+        <div class="row">
+          <div
+            v-for="(result, index) in examResults"
+            :key="index"
+            class="col-md-6 col-sm-12"
+          >
+            <div class="result">
+              <p>
+                Question {{ result.questionIndex + 1 }}:
+                {{ result.isCorrect ? "Correct" : "Incorrect" }}
+              </p>
+              <p v-if="!result.isCorrect">
+                Your Answer: {{ result.selectedAnswer }}
+              </p>
+              <p>Correct Answer: {{ result.correctAnswer }}</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</template>
+  </template>  
 
 <script>
 export default {
