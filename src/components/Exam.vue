@@ -10,10 +10,11 @@
         <div class="card mt-4">
           <div class="card-body">
             <p class="card-text">{{ question.text }}</p>
-            <select v-model="selectedAnswers[index]" class="form-select">
+            <select v-model="selectedAnswers[question.id]" class="form-select">
               <option
                 v-for="(answer, ansIndex) in question.answers"
                 :key="ansIndex"
+                :value="answer.text"
               >
                 {{ answer.text }}
               </option>
@@ -51,16 +52,15 @@
           class="col-md-6 col-sm-12"
         >
           <div class="result">
-            <p>{{ result.question }}</p>
+            <p>{{ result.question.text }}</p>
             <p>
               Question {{ result.questionIndex + 1 }}:
               {{ result.isCorrect ? "Correct" : "Incorrect" }}
             </p>
-            <p>Question: {{ questions[result.questionIndex].text }}</p>
             <p v-if="!result.isCorrect">
               Your Answer: {{ result.selectedAnswer }}
             </p>
-            <p>Correct Answer: {{ result.correctAnswer }}</p>
+            <p>Correct Answer: {{ result.correctAnswer }} </p>
           </div>
         </div>
       </div>
@@ -73,13 +73,23 @@ import { questions } from "../storage/questions";
 
 export default {
   data() {
+    // Agregar IDs automáticamente a las preguntas
+    questions.forEach((question, index) => {
+      question.id = index + 1;
+    });
+
+    const initialSelectedAnswers = {};
+    questions.forEach((question) => {
+      initialSelectedAnswers[question.id] = null;
+    });
+
     return {
       questions: questions,
-      selectedAnswers: [],
+      selectedAnswers: initialSelectedAnswers,
       sendButtonText: "Send",
       examResults: [],
       showResults: false,
-      currentPage: 0, // Agrega currentPage
+      currentPage: 0,
       questionsPerPage: 16,
     };
   },
@@ -87,21 +97,10 @@ export default {
     visibleQuestions() {
       const startIndex = this.currentPage * this.questionsPerPage;
       const endIndex = startIndex + this.questionsPerPage;
-      return this.shuffledQuestions.slice(startIndex, endIndex);
+      return this.questions.slice(startIndex, endIndex);
     },
     pageCount() {
-      return Math.ceil(this.shuffledQuestions.length / this.questionsPerPage);
-    },
-    shuffledQuestions() {
-      // Copia y revuelve tanto las preguntas como las respuestas
-      const shuffled = [...this.questions].map((question) => {
-        const shuffledAnswers = this.shuffleArray([...question.answers]);
-        return {
-          text: question.text,
-          answers: shuffledAnswers,
-        };
-      });
-      return this.shuffleArray(shuffled);
+      return Math.ceil(this.questions.length / this.questionsPerPage);
     },
   },
   methods: {
@@ -115,28 +114,19 @@ export default {
         this.currentPage++;
       }
     },
-    shuffleArray(array) {
-      // Función para revolver un array
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    },
     submitExam() {
-      // Lógica para evaluar el examen
       let score = 0;
       const examResults = [];
 
       for (let i = 0; i < this.questions.length; i++) {
-        const selectedAnswer = this.selectedAnswers[i];
-        const correctAnswer = this.shuffledQuestions[i].answers.find(
-          (answer) => answer.correct
-        ).text;
+        const question = this.questions[i];
+        const selectedAnswer = this.selectedAnswers[question.id];
+        const correctAnswer = question.answers.find((answer) => answer.correct).text;
         const isCorrect = selectedAnswer === correctAnswer;
 
         examResults.push({
           questionIndex: i,
+          question,
           selectedAnswer,
           correctAnswer,
           isCorrect,
@@ -149,8 +139,9 @@ export default {
 
       this.examResults = examResults;
       this.showResults = true;
-      console.log(this.showResults);
       alert(`Score: ${score}/${this.questions.length}`);
+      console.log(questions);
+      console.log(examResults);
     },
   },
 };

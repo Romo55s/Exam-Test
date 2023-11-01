@@ -540,12 +540,12 @@ export const questions = [
     ],
   },
   {
-    text: "This defines the elements and attributes that can appear in a document, how the elements are nested and the order:",
+    text: "This defines the elements and attributes that can appear in a document, how the elements are nested and the order and XML Schema number of elements, and whether an element is empty or  can include text",
     answers: [
-      { text: "XML Namespace", correct: true },
+      { text: "XML Namespace", correct: false },
       { text: "Prolog", correct: false },
       { text: "Basic rules of XML", correct: false },
-      { text: "Binary data", correct: false },
+      { text: "XML Schema", correct: true },
       { text: "XML Service", correct: false },
     ],
   },
